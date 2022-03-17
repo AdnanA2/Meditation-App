@@ -8,6 +8,7 @@ const app = () => {
     const sounds = document.querySelectorAll(".sound-picker button")
     //The time display
     const timeDisplay = document.querySelector(".time-display");
+    const timeSelect = document.querySelectorAll(".time-select Button");
     //The length of outline
     const outlineLength = outline.getTotalLength();
     console.log(outlineLength);
@@ -17,9 +18,25 @@ const app = () => {
     outline.style.strokeDasharray = outlineLength;
     outline.style.strokeDashoffset = outlineLength;
 
-    
+    //Play different sounds
+    sounds.forEach(sound =>{
+        sound.addEventListener("click", function(){
+            song.src = this.getAttribute("data-sound");
+            video.src = this.getAttribute("data-video");
+            Playing(song);
+        })
+    })
+    //Plays the sound
     play.addEventListener("click", () => {
-        song.play();
+        Playing(song);
+    });
+
+    //Pick the sound
+    timeSelect.forEach(element => {
+        element.addEventListener("click", function(){
+            theDuration = this.getAttribute("data-time");
+            timeDisplay.textContent = `${Math.floor(theDuration / 60)}: ${Math.floor(theDuration % 60)}`;
+        });
     });
 
     const Playing = song =>{
@@ -29,7 +46,30 @@ const app = () => {
         }
         else{
             song.pause();
+            video.pause();
             play.src = "./svg/play.svg"
+        }
+    };
+
+    //The circle
+    song.ontimeupdate = ()=>{
+        let currentTime = song.currentTime;
+        let elapsed = theDuration -currentTime;
+        let seconds = Math.floor(elapsed % 60);
+        let minutes = Math.floor(elapsed / 60);
+
+
+        //The animation of the circle
+        let progress = outlineLength - (currentTime / theDuration) * outlineLength
+        outline.style.strokeDashoffset = progress;
+        //the text animation
+        timeDisplay.textContent = `${minutes}:${seconds}`;
+
+        if(currentTime >= theDuration){
+            song.pause();
+            song.currentTime = 0;
+            play.src = "./svg/play.svg";
+            video.pause();
         }
     }
 
