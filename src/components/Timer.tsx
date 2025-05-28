@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import BreathingPrompt from './BreathingPrompt'
 import { saveSession } from '../utils/sessionStorage'
+import { updateStreak } from '../utils/streakStorage'
 
 interface TimerProps {
   defaultDuration?: number
+  onSessionComplete?: () => void
 }
 
-const Timer = ({ defaultDuration = 300 }: TimerProps) => {
+const Timer = ({ defaultDuration = 300, onSessionComplete }: TimerProps) => {
   const [seconds, setSeconds] = useState(defaultDuration)
   const [isActive, setIsActive] = useState(false)
   const [showBreathing, setShowBreathing] = useState(false)
@@ -26,11 +28,13 @@ const Timer = ({ defaultDuration = 300 }: TimerProps) => {
     } else if (seconds === 0 && isActive) {
       audioRef.current?.play()
       setIsActive(false)
-      // Save completed session
+      // Save completed session and update streak
       saveSession({
         duration: defaultDuration,
         timestamp: new Date().toISOString()
       })
+      updateStreak()
+      onSessionComplete?.()
     }
 
     return () => {
@@ -38,7 +42,7 @@ const Timer = ({ defaultDuration = 300 }: TimerProps) => {
         clearInterval(interval)
       }
     }
-  }, [isActive, seconds, defaultDuration])
+  }, [isActive, seconds, defaultDuration, onSessionComplete])
 
   const formatTime = (totalSeconds: number): string => {
     const minutes = Math.floor(totalSeconds / 60)

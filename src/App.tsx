@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import Timer from './components/Timer'
 import SessionHistory from './components/SessionHistory'
+import StreakTracker from './components/StreakTracker'
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode')
     return saved ? JSON.parse(saved) : false
   })
+
+  const [sessionKey, setSessionKey] = useState(0) // Used to force re-render of components
 
   useEffect(() => {
     if (darkMode) {
@@ -17,6 +20,11 @@ function App() {
     }
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
   }, [darkMode])
+
+  const handleSessionComplete = () => {
+    // Force re-render of components that need to update
+    setSessionKey(prev => prev + 1)
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -41,11 +49,12 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl space-y-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <Timer defaultDuration={300} />
+          <StreakTracker key={sessionKey} />
+          <Timer defaultDuration={300} onSessionComplete={handleSessionComplete} />
         </div>
         
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <SessionHistory />
+          <SessionHistory key={sessionKey} />
         </div>
       </main>
 
