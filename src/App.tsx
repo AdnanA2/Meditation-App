@@ -4,6 +4,7 @@ import Timer from './components/Timer'
 import SessionHistory from './components/SessionHistory'
 import StreakTracker from './components/StreakTracker'
 import SettingsModal, { UserPreferences } from './components/SettingsModal'
+import { Header } from './components/Header'
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -41,36 +42,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="p-4 flex justify-between items-center border-b dark:border-gray-800">
-        <h1 className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-          Meditation Timer
-        </h1>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Settings"
-          >
-            <Cog6ToothIcon className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? (
-              <SunIcon className="w-6 h-6" />
-            ) : (
-              <MoonIcon className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-      </header>
-
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+      <Header />
+      
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl space-y-8">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl space-y-8 mt-16">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <StreakTracker key={sessionKey} />
           <Timer 
