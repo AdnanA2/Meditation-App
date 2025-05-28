@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import BreathingPrompt from './BreathingPrompt'
+import { saveSession } from '../utils/sessionStorage'
 
 interface TimerProps {
   defaultDuration?: number
@@ -7,6 +9,12 @@ interface TimerProps {
 const Timer = ({ defaultDuration = 300 }: TimerProps) => {
   const [seconds, setSeconds] = useState(defaultDuration)
   const [isActive, setIsActive] = useState(false)
+  const [showBreathing, setShowBreathing] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  useEffect(() => {
+    audioRef.current = new Audio('/bell.mp3')
+  }, [])
 
   useEffect(() => {
     let interval: number | undefined
@@ -15,6 +23,14 @@ const Timer = ({ defaultDuration = 300 }: TimerProps) => {
       interval = window.setInterval(() => {
         setSeconds((seconds) => seconds - 1)
       }, 1000)
+    } else if (seconds === 0 && isActive) {
+      audioRef.current?.play()
+      setIsActive(false)
+      // Save completed session
+      saveSession({
+        duration: defaultDuration,
+        timestamp: new Date().toISOString()
+      })
     }
 
     return () => {
@@ -22,7 +38,7 @@ const Timer = ({ defaultDuration = 300 }: TimerProps) => {
         clearInterval(interval)
       }
     }
-  }, [isActive, seconds])
+  }, [isActive, seconds, defaultDuration])
 
   const formatTime = (totalSeconds: number): string => {
     const minutes = Math.floor(totalSeconds / 60)
@@ -49,6 +65,8 @@ const Timer = ({ defaultDuration = 300 }: TimerProps) => {
       <div className="text-7xl font-bold font-mono">
         {formatTime(seconds)}
       </div>
+      
+      <BreathingPrompt isActive={showBreathing && isActive} />
       
       <div className="flex space-x-4">
         <button
@@ -85,6 +103,13 @@ const Timer = ({ defaultDuration = 300 }: TimerProps) => {
           15 min
         </button>
       </div>
+
+      <button
+        onClick={() => setShowBreathing(!showBreathing)}
+        className={`btn ${showBreathing ? 'btn-primary' : 'btn-secondary'}`}
+      >
+        {showBreathing ? 'Hide Breathing Guide' : 'Show Breathing Guide'}
+      </button>
     </div>
   )
 }
