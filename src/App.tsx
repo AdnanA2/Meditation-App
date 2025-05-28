@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 import Timer from './components/Timer'
+import SessionHistory from './components/SessionHistory'
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -38,9 +39,13 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl space-y-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <Timer defaultDuration={300} />
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <SessionHistory />
         </div>
       </main>
 
