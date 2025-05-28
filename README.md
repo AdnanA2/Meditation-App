@@ -23,11 +23,13 @@ This project reflects both where I started — and how far I’ve come. It’s a
 - Simple UI with minimal styling
 - Written in vanilla JS with inline CSS
 
-### v2 (2025 Refresh)
+### v2 (2025 – React Rebuild)
+- Built with React components
 - Clean, distraction-free responsive UI
-- Ambient visual breathing cues
-- Modular JS, improved file structure
-- Planned: Custom session duration setting
+- Visual breathing animations
+- State-managed timer logic
+- Modular codebase for future features
+- Planned: Custom session duration + sound support
 
 ---
 
