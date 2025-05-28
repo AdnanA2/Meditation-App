@@ -6,17 +6,25 @@ import { updateStreak } from '../utils/streakStorage'
 interface TimerProps {
   defaultDuration?: number
   onSessionComplete?: () => void
+  showBreathingByDefault?: boolean
+  soundFile?: string
 }
 
-const Timer = ({ defaultDuration = 300, onSessionComplete }: TimerProps) => {
+const Timer = ({ 
+  defaultDuration = 300, 
+  onSessionComplete,
+  showBreathingByDefault = false,
+  soundFile = 'bell.mp3'
+}: TimerProps) => {
   const [seconds, setSeconds] = useState(defaultDuration)
   const [isActive, setIsActive] = useState(false)
-  const [showBreathing, setShowBreathing] = useState(false)
+  const [showBreathing, setShowBreathing] = useState(showBreathingByDefault)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [initialDuration, setInitialDuration] = useState(defaultDuration)
 
   useEffect(() => {
-    audioRef.current = new Audio('/bell.mp3')
-  }, [])
+    audioRef.current = new Audio(`/${soundFile}`)
+  }, [soundFile])
 
   useEffect(() => {
     let interval: number | undefined
@@ -30,7 +38,7 @@ const Timer = ({ defaultDuration = 300, onSessionComplete }: TimerProps) => {
       setIsActive(false)
       // Save completed session and update streak
       saveSession({
-        duration: defaultDuration,
+        duration: initialDuration,
         timestamp: new Date().toISOString()
       })
       updateStreak()
@@ -42,7 +50,7 @@ const Timer = ({ defaultDuration = 300, onSessionComplete }: TimerProps) => {
         clearInterval(interval)
       }
     }
-  }, [isActive, seconds, defaultDuration, onSessionComplete])
+  }, [isActive, seconds, initialDuration, onSessionComplete])
 
   const formatTime = (totalSeconds: number): string => {
     const minutes = Math.floor(totalSeconds / 60)
@@ -56,18 +64,36 @@ const Timer = ({ defaultDuration = 300, onSessionComplete }: TimerProps) => {
 
   const handleReset = () => {
     setIsActive(false)
-    setSeconds(defaultDuration)
+    setSeconds(initialDuration)
   }
 
   const handlePreset = (minutes: number) => {
     setIsActive(false)
-    setSeconds(minutes * 60)
+    const newDuration = minutes * 60
+    setInitialDuration(newDuration)
+    setSeconds(newDuration)
   }
+
+  const progress = ((initialDuration - seconds) / initialDuration) * 100
 
   return (
     <div className="flex flex-col items-center space-y-8">
-      <div className="text-7xl font-bold font-mono">
-        {formatTime(seconds)}
+      <div className="relative w-full max-w-md">
+        <div className="text-7xl font-bold font-mono text-center transition-opacity duration-300"
+             style={{ opacity: isActive ? 1 : 0.6 }}>
+          {formatTime(seconds)}
+        </div>
+        {!isActive && seconds < initialDuration && (
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 text-lg text-gray-500 animate-pulse">
+            Paused
+          </div>
+        )}
+        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-4 overflow-hidden">
+          <div 
+            className="h-full bg-primary-500 transition-all duration-1000 ease-linear"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
       </div>
       
       <BreathingPrompt isActive={showBreathing && isActive} />
