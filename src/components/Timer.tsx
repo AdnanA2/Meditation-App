@@ -1,26 +1,34 @@
+import { useTimer, TimerPreset } from '../hooks/useTimer';
+import { formatTime } from '../utils/formatTime';
 import { useState, useEffect, useRef } from 'react'
 import BreathingPrompt from './BreathingPrompt'
 import { saveSession } from '../utils/sessionStorage'
 import { updateStreak } from '../utils/streakStorage'
 
 interface TimerProps {
-  defaultDuration?: number
-  onSessionComplete?: () => void
-  showBreathingByDefault?: boolean
-  soundFile?: string
+  onSessionComplete: () => void;
+  defaultDuration?: TimerPreset;
+  showBreathingByDefault?: boolean;
+  soundFile?: string;
 }
 
-const Timer = ({ 
-  defaultDuration = 300, 
-  onSessionComplete,
-  showBreathingByDefault = false,
-  soundFile = 'bell.mp3'
-}: TimerProps) => {
-  const [seconds, setSeconds] = useState(defaultDuration)
-  const [isActive, setIsActive] = useState(false)
+export const Timer = ({ onSessionComplete, defaultDuration = 5, showBreathingByDefault = false, soundFile = 'bell.mp3' }: TimerProps) => {
+  const {
+    timeLeft,
+    isRunning,
+    isPaused,
+    progress,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    setDuration,
+  } = useTimer({ onSessionComplete, defaultDuration });
+
+  const presets: TimerPreset[] = [5, 10, 15];
+
   const [showBreathing, setShowBreathing] = useState(showBreathingByDefault)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [initialDuration, setInitialDuration] = useState(defaultDuration)
+  const [initialDuration, setInitialDuration] = useState(defaultDuration * 60)
 
   useEffect(() => {
     audioRef.current = new Audio(`/${soundFile}`)
@@ -29,13 +37,13 @@ const Timer = ({
   useEffect(() => {
     let interval: number | undefined
 
-    if (isActive && seconds > 0) {
+    if (isRunning && timeLeft > 0) {
       interval = window.setInterval(() => {
-        setSeconds((seconds) => seconds - 1)
+        setDuration(timeLeft - 1)
       }, 1000)
-    } else if (seconds === 0 && isActive) {
+    } else if (timeLeft === 0 && isRunning) {
       audioRef.current?.play()
-      setIsActive(false)
+      setDuration(initialDuration)
       // Save completed session and update streak
       saveSession({
         duration: initialDuration,
@@ -50,89 +58,78 @@ const Timer = ({
         clearInterval(interval)
       }
     }
-  }, [isActive, seconds, initialDuration, onSessionComplete])
-
-  const formatTime = (totalSeconds: number): string => {
-    const minutes = Math.floor(totalSeconds / 60)
-    const remainingSeconds = totalSeconds % 60
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
-
-  const handleStartPause = () => {
-    setIsActive(!isActive)
-  }
-
-  const handleReset = () => {
-    setIsActive(false)
-    setSeconds(initialDuration)
-  }
+  }, [isRunning, timeLeft, initialDuration, onSessionComplete])
 
   const handlePreset = (minutes: number) => {
-    setIsActive(false)
-    const newDuration = minutes * 60
-    setInitialDuration(newDuration)
-    setSeconds(newDuration)
+    setDuration(minutes * 60)
+    setInitialDuration(minutes * 60)
   }
 
-  const progress = ((initialDuration - seconds) / initialDuration) * 100
-
   return (
-    <div className="flex flex-col items-center space-y-8">
-      <div className="relative w-full max-w-md">
-        <div className="text-7xl font-bold font-mono text-center transition-opacity duration-300"
-             style={{ opacity: isActive ? 1 : 0.6 }}>
-          {formatTime(seconds)}
+    <div className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+      {/* Timer Display */}
+      <div className="relative mb-8">
+        <div className="text-6xl font-bold text-center text-gray-800 dark:text-white mb-4">
+          {formatTime(timeLeft)}
         </div>
-        {!isActive && seconds < initialDuration && (
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 text-lg text-gray-500 animate-pulse">
+        {isPaused && (
+          <div className="absolute top-0 right-0 text-sm text-gray-500 dark:text-gray-400">
             Paused
           </div>
         )}
-        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-4 overflow-hidden">
-          <div 
-            className="h-full bg-primary-500 transition-all duration-1000 ease-linear"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
       </div>
-      
-      <BreathingPrompt isActive={showBreathing && isActive} />
-      
-      <div className="flex space-x-4">
+
+      {/* Progress Bar */}
+      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
+        <div
+          className="h-full bg-blue-500 dark:bg-blue-400 rounded-full transition-all duration-1000 ease-linear"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Preset Buttons */}
+      <div className="flex justify-center gap-4 mb-8">
+        {presets.map((preset) => (
+          <button
+            key={preset}
+            onClick={() => handlePreset(preset)}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              timeLeft === preset * 60
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            {preset}m
+          </button>
+        ))}
+      </div>
+
+      {/* Control Buttons */}
+      <div className="flex justify-center gap-4">
+        {!isRunning ? (
+          <button
+            onClick={startTimer}
+            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+          >
+            Start
+          </button>
+        ) : (
+          <button
+            onClick={pauseTimer}
+            className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+          >
+            Pause
+          </button>
+        )}
         <button
-          onClick={handleStartPause}
-          className="btn btn-primary"
-        >
-          {isActive ? 'Pause' : 'Start'}
-        </button>
-        <button
-          onClick={handleReset}
-          className="btn btn-secondary"
+          onClick={resetTimer}
+          className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
         >
           Reset
         </button>
       </div>
 
-      <div className="flex space-x-4">
-        <button
-          onClick={() => handlePreset(5)}
-          className="btn btn-secondary"
-        >
-          5 min
-        </button>
-        <button
-          onClick={() => handlePreset(10)}
-          className="btn btn-secondary"
-        >
-          10 min
-        </button>
-        <button
-          onClick={() => handlePreset(15)}
-          className="btn btn-secondary"
-        >
-          15 min
-        </button>
-      </div>
+      <BreathingPrompt isActive={showBreathing && !isPaused} />
 
       <button
         onClick={() => setShowBreathing(!showBreathing)}
@@ -141,7 +138,7 @@ const Timer = ({
         {showBreathing ? 'Hide Breathing Guide' : 'Show Breathing Guide'}
       </button>
     </div>
-  )
-}
+  );
+};
 
 export default Timer 

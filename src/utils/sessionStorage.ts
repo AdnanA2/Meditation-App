@@ -1,24 +1,23 @@
-export interface MeditationSession {
-  duration: number
-  timestamp: string
-}
+import { Session } from '../types/session';
 
-const STORAGE_KEY = 'meditationSessions'
+const STORAGE_KEY = 'meditation_sessions';
 
-export const saveSession = (session: MeditationSession): void => {
-  const sessions = getSessions()
-  sessions.unshift(session) // Add new session at the beginning
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions))
-}
+export const saveSession = (session: Session): void => {
+  const sessions = getSessions();
+  sessions.unshift(session); // Add new session at the beginning
+  // Keep only the last 10 sessions
+  const trimmedSessions = sessions.slice(0, 10);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmedSessions));
+};
 
-export const getSessions = (): MeditationSession[] => {
-  const sessions = localStorage.getItem(STORAGE_KEY)
-  return sessions ? JSON.parse(sessions) : []
-}
+export const getSessions = (): Session[] => {
+  const sessions = localStorage.getItem(STORAGE_KEY);
+  return sessions ? JSON.parse(sessions) : [];
+};
 
 export const clearSessions = (): void => {
-  localStorage.removeItem(STORAGE_KEY)
-}
+  localStorage.removeItem(STORAGE_KEY);
+};
 
 export const formatDuration = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60)
