@@ -1,49 +1,51 @@
-interface StreakData {
-  streakCount: number
-  lastCompletedDate: string
-}
+const STREAK_KEY = 'meditation_streak';
+const LAST_SESSION_KEY = 'last_meditation_session';
 
-const STREAK_KEY = 'meditationStreak'
+interface StreakData {
+  currentStreak: number;
+  lastSessionDate: string;
+}
 
 export const getStreakData = (): StreakData => {
-  const data = localStorage.getItem(STREAK_KEY)
-  return data ? JSON.parse(data) : { streakCount: 0, lastCompletedDate: '' }
-}
+  const streakData = localStorage.getItem(STREAK_KEY);
+  return streakData ? JSON.parse(streakData) : { currentStreak: 0, lastSessionDate: '' };
+};
 
-export const updateStreak = (): StreakData => {
-  const currentDate = new Date().toDateString()
-  const { streakCount, lastCompletedDate } = getStreakData()
+export const updateStreak = (): void => {
+  const today = new Date().toISOString().split('T')[0];
+  const { currentStreak, lastSessionDate } = getStreakData();
+  const lastDate = lastSessionDate ? new Date(lastSessionDate).toISOString().split('T')[0] : '';
   
-  // If no previous sessions
-  if (!lastCompletedDate) {
-    const newData = { streakCount: 1, lastCompletedDate: currentDate }
-    localStorage.setItem(STREAK_KEY, JSON.stringify(newData))
-    return newData
-  }
-
-  const lastDate = new Date(lastCompletedDate)
-  const today = new Date(currentDate)
-  const diffDays = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24))
-
-  let newStreakCount = streakCount
-
-  if (diffDays === 1) {
-    // Consecutive day
-    newStreakCount = streakCount + 1
-  } else if (diffDays > 1) {
-    // Streak broken
-    newStreakCount = 1
-  }
-  // If diffDays === 0, it's the same day, keep the streak count
-
-  const newData = {
-    streakCount: newStreakCount,
-    lastCompletedDate: currentDate
+  let newStreak = currentStreak;
+  
+  if (!lastDate) {
+    // First session ever
+    newStreak = 1;
+  } else {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    if (lastDate === yesterdayStr) {
+      // Meditated yesterday, increment streak
+      newStreak = currentStreak + 1;
+    } else if (lastDate !== today) {
+      // Missed a day, reset streak
+      newStreak = 1;
+    }
   }
   
-  localStorage.setItem(STREAK_KEY, JSON.stringify(newData))
-  return newData
-}
+  const streakData: StreakData = {
+    currentStreak: newStreak,
+    lastSessionDate: today
+  };
+  
+  localStorage.setItem(STREAK_KEY, JSON.stringify(streakData));
+};
+
+export const resetStreak = (): void => {
+  localStorage.removeItem(STREAK_KEY);
+};
 
 export const formatStreakDate = (dateString: string): string => {
   if (!dateString) return ''
