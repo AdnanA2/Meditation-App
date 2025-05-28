@@ -1,31 +1,44 @@
-# 🧘‍♂️ Meditation App
+# 🧘‍♂️ Meditation App v2
 
-A minimalist meditation timer built to help users focus, relax, and practice mindfulness through timed sessions and breathing exercises.
+A modern, minimal meditation timer built with React + Tailwind CSS to help users focus, relax, and build mindfulness habits.
 
-## 📜 Project Background
+## 📜 Background
 
-Originally built in 2021 as one of my first JavaScript projects. In 2024, I revisited the app to improve code structure, organization, and overall presentation as part of a personal portfolio refresh.
-
-This project reflects my early learning journey — and my commitment to revisiting, refactoring, and continuously improving what I build.
+This app was originally created in 2021 as a simple vanilla JavaScript project. In 2024, it was fully rebuilt from scratch using React and Tailwind CSS to reflect modern best practices in front-end development — and to turn a personal idea into a polished, real-world tool.
 
 ## ✨ Features
 
-- Simple start/stop meditation timer
-- Clean, distraction-free UI
-- Custom session duration (coming soon)
-- Ambient visual feedback
-- Built for desktop and mobile browsers
+- ⏲️ Start/Pause/Reset meditation timer
+- 🔔 Bell sound when time ends
+- 🧩 Preset session durations (5, 10, 15, 20 mins)
+- ✍️ Custom duration input
+- 🌙 Dark mode toggle
+- 🌬️ Optional breathing guidance prompts (coming soon)
+- 💾 Remembers last session with `localStorage`
+- 📱 Fully responsive design for mobile + desktop
 
 ## 🛠 Tech Stack
 
-- HTML
-- CSS
-- JavaScript 
+- React (Vite)
+- Tailwind CSS
+- HTML Audio API
+- Local Storage API
 
-## 📦 Getting Started
+## 📸 Screenshots
 
-To run locally:
+> _[Include a few screenshots or a demo GIF here when ready]_
 
+## 🚀 Live Demo
+
+> _[Link to your Vercel or Netlify deployment]_  
+> Coming soon...
+
+## 🧪 Getting Started
+
+Clone the project and run it locally:
+
+```bash
 git clone https://github.com/AdnanA2/Meditation-App.git
-cd Meditation-App
-open index.html  # or just double-click it
+cd meditation-app-v2
+npm install
+npm run dev
