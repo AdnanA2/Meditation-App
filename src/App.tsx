@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
+import Timer from './components/Timer'
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -39,13 +40,7 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="text-center">
-            <h2 className="text-6xl font-bold mb-8">00:00</h2>
-            <div className="space-x-4">
-              <button className="btn btn-primary">Start</button>
-              <button className="btn btn-secondary">Reset</button>
-            </div>
-          </div>
+          <Timer defaultDuration={300} />
         </div>
       </main>
 
