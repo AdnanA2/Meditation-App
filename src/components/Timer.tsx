@@ -49,7 +49,7 @@ export const Timer = ({
       {/* Progress Bar */}
       <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
         <div
-          className="h-full bg-indigo-600 dark:bg-indigo-400 rounded-full transition-all duration-1000 ease-linear"
+          className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-1000 ease-linear"
           style={{ width: `${progress}%` }}
         />
       </div>

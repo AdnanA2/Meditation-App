@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react'
+import React, { useReducer, useEffect } from 'react'
 
 interface BreathingPromptProps {
   isActive: boolean

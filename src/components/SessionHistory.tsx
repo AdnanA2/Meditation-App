@@ -37,7 +37,7 @@ export const SessionHistory = () => {
   if (isLoading) {
     return (
       <Card>
-        <div className="flex items-center justify-center py-8">
+        <div className="flex items-center justify-center py-8 animate-fade-in">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           <span className="ml-3 text-gray-600 dark:text-gray-400">Loading sessions...</span>
         </div>
