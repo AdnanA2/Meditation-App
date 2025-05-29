@@ -1,4 +1,4 @@
-# 🧘‍♂️ Meditation App v2
+# 🧘‍♂️ Meditation App
 
 A modern, minimal meditation timer built with React + Tailwind CSS to help users focus, relax, and build mindfulness habits.
 
@@ -39,6 +39,6 @@ Clone the project and run it locally:
 
 ```bash
 git clone https://github.com/AdnanA2/Meditation-App.git
-cd meditation-app-v2
+cd Meditation-App
 npm install
 npm run dev

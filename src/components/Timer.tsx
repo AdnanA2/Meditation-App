@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { useTimer, TimerPreset } from '../hooks/useTimer';
 import { formatTime } from '../utils/formatTime';
-import { useState } from 'react';
 import BreathingPrompt from './BreathingPrompt';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -12,12 +12,12 @@ interface TimerProps {
   soundFile?: string;
 }
 
-export const Timer = ({ 
+export const Timer: React.FC<TimerProps> = ({ 
   onSessionComplete, 
   defaultDuration = 5, 
   showBreathingByDefault = false, 
   soundFile = 'bell.mp3' 
-}: TimerProps) => {
+}) => {
   const {
     timeLeft,
     isRunning,
@@ -33,7 +33,7 @@ export const Timer = ({
   const [showBreathing, setShowBreathing] = useState(showBreathingByDefault);
 
   return (
-    <Card className="p-6 max-w-md mx-auto">
+    <Card>
       {/* Timer Display */}
       <div className="relative mb-8">
         <div 
