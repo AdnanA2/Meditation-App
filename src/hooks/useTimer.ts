@@ -1,10 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { saveSession } from '../utils/sessionStorage';
+import { updateStreak } from '../utils/streakStorage';
 
 export type TimerPreset = 5 | 10 | 15;
 
 interface UseTimerProps {
   onSessionComplete: () => void;
   defaultDuration?: TimerPreset;
+  soundFile?: string;
 }
 
 interface UseTimerReturn {
@@ -16,17 +19,25 @@ interface UseTimerReturn {
   pauseTimer: () => void;
   resetTimer: () => void;
   setDuration: (duration: TimerPreset) => void;
+  handlePreset: (minutes: TimerPreset) => void;
 }
 
 export const useTimer = ({ 
   onSessionComplete, 
-  defaultDuration = 5 
+  defaultDuration = 5,
+  soundFile = 'bell.mp3'
 }: UseTimerProps): UseTimerReturn => {
   const [timeLeft, setTimeLeft] = useState<number>(defaultDuration * 60);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [duration, setDuration] = useState<number>(defaultDuration * 60);
   const [progress, setProgress] = useState<number>(100);
+  const [initialDuration, setInitialDuration] = useState(defaultDuration * 60);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio(`/${soundFile}`);
+  }, [soundFile]);
 
   useEffect(() => {
     let intervalId: number | undefined;
@@ -39,8 +50,15 @@ export const useTimer = ({
           return newTime;
         });
       }, 1000);
-    } else if (timeLeft === 0) {
-      setIsRunning(false);
+    } else if (timeLeft === 0 && isRunning) {
+      audioRef.current?.play();
+      setDuration(initialDuration);
+      // Save completed session and update streak
+      saveSession({
+        duration: initialDuration,
+        timestamp: new Date().toISOString()
+      });
+      updateStreak();
       onSessionComplete();
     }
 
@@ -49,7 +67,7 @@ export const useTimer = ({
         clearInterval(intervalId);
       }
     };
-  }, [isRunning, timeLeft, duration, onSessionComplete]);
+  }, [isRunning, timeLeft, duration, initialDuration, onSessionComplete]);
 
   const startTimer = useCallback(() => {
     setIsRunning(true);
@@ -77,6 +95,16 @@ export const useTimer = ({
     setIsPaused(false);
   }, []);
 
+  const handlePreset = useCallback((minutes: TimerPreset) => {
+    const seconds = minutes * 60;
+    setDuration(seconds);
+    setInitialDuration(seconds);
+    setTimeLeft(seconds);
+    setProgress(100);
+    setIsRunning(false);
+    setIsPaused(false);
+  }, []);
+
   return {
     timeLeft,
     isRunning,
@@ -86,5 +114,6 @@ export const useTimer = ({
     pauseTimer,
     resetTimer,
     setDuration: handleSetDuration,
+    handlePreset,
   };
 }; 
