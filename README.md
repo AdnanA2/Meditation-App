@@ -1,4 +1,4 @@
-# 🧘‍♂️ Meditation App v2
+# 🧘‍♂️ Meditation App
 
 A minimalist meditation timer built to help users focus, relax, and practice mindfulness through timed sessions and breathing exercises.
 
@@ -27,6 +27,6 @@ This project reflects my early learning journey — and my commitment to revisit
 To run locally:
 
 git clone https://github.com/AdnanA2/Meditation-App.git
-cd meditation-app-v2
+cd Meditation-App
 npm install
 npm run dev
