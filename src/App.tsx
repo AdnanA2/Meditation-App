@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { SunIcon, MoonIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { useState, useEffect } from 'react'
 import Timer from './components/Timer'
 import SessionHistory from './components/SessionHistory'
 import StreakTracker from './components/StreakTracker'
@@ -42,12 +41,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <Header />
       
-      {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-4xl space-y-8 mt-16">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+      <main className="mt-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <StreakTracker key={sessionKey} />
           <Timer 
             defaultDuration={userPreferences.defaultDuration} 
@@ -57,17 +55,15 @@ function App() {
           />
         </div>
         
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <SessionHistory key={sessionKey} />
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="p-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600 dark:text-gray-400 border-t dark:border-gray-800 bg-white dark:bg-gray-800 transition-colors duration-300">
+      <footer className="mt-8 p-4 text-center text-sm text-gray-600 dark:text-gray-400">
         <p>Find your peace, one breath at a time</p>
       </footer>
 
-      {/* Settings Modal */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
