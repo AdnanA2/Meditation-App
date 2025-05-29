@@ -2,12 +2,20 @@ import { useState, useEffect } from 'react'
 import { Session } from '../types/session'
 import { getSessions, clearSessions } from '../utils/sessionStorage'
 import { formatDate } from '../utils/formatDate'
+import { Card } from './ui/Card'
+import { Button } from './ui/Button'
 
 export const SessionHistory = () => {
   const [sessions, setSessions] = useState<Session[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const loadSessions = () => {
-    setSessions(getSessions())
+    setIsLoading(true)
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setSessions(getSessions())
+      setIsLoading(false)
+    }, 500)
   }
 
   useEffect(() => {
@@ -26,29 +34,37 @@ export const SessionHistory = () => {
     return `${minutes} minute${minutes !== 1 ? 's' : ''}`
   }
 
+  if (isLoading) {
+    return (
+      <Card>
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">Loading sessions...</span>
+        </div>
+      </Card>
+    )
+  }
+
   if (sessions.length === 0) {
     return (
-      <div className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+      <Card>
         <div className="text-center text-gray-600 dark:text-gray-400">
           <p className="text-xl mb-2">No meditation sessions yet</p>
           <p className="text-sm">Complete a meditation session to see your history here</p>
         </div>
-      </div>
+      </Card>
     )
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+    <Card>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
           Recent Sessions
         </h2>
-        <button
-          onClick={handleClearHistory}
-          className="px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
-        >
+        <Button onClick={handleClearHistory} variant="danger">
           Clear History
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-4">
@@ -74,6 +90,6 @@ export const SessionHistory = () => {
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   )
 } 

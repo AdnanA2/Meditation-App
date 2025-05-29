@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { Button } from './ui/Button'
+import { Card } from './ui/Card'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -55,16 +57,16 @@ const SettingsModal = ({ isOpen, onClose, onSave }: SettingsModalProps) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <Card className="w-full max-w-md">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
           Settings
         </h2>
 
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Default Session Duration
+              Default Duration
             </label>
             <select
               value={preferences.defaultDuration}
@@ -72,7 +74,7 @@ const SettingsModal = ({ isOpen, onClose, onSave }: SettingsModalProps) => {
                 ...prev,
                 defaultDuration: Number(e.target.value)
               }))}
-              className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-3 py-2"
             >
               {DURATION_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>
@@ -84,7 +86,7 @@ const SettingsModal = ({ isOpen, onClose, onSave }: SettingsModalProps) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Bell Sound
+              Sound
             </label>
             <select
               value={preferences.sound}
@@ -92,7 +94,7 @@ const SettingsModal = ({ isOpen, onClose, onSave }: SettingsModalProps) => {
                 ...prev,
                 sound: e.target.value
               }))}
-              className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+              className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-3 py-2"
             >
               {SOUND_OPTIONS.map(option => (
                 <option key={option.value} value={option.value}>
@@ -111,29 +113,23 @@ const SettingsModal = ({ isOpen, onClose, onSave }: SettingsModalProps) => {
                 ...prev,
                 breathingEnabled: e.target.checked
               }))}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
             />
             <label htmlFor="breathingEnabled" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-              Enable Breathing Guide by Default
+              Enable Breathing Guide
             </label>
           </div>
         </div>
 
         <div className="mt-8 flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-          >
+          <Button onClick={onClose} variant="secondary">
             Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md"
-          >
+          </Button>
+          <Button onClick={handleSave} variant="primary">
             Save Changes
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }
