@@ -6,38 +6,49 @@ import BreathingPrompt from './BreathingPrompt';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import type { UserPreferences } from '../hooks/useSettings';
+import type { Achievement } from '../types/achievement';
 
 interface TimerProps {
   onSessionComplete: () => void;
   preferences: UserPreferences;
+  onNewAchievements?: (achievements: Achievement[]) => void;
 }
 
 export const Timer: React.FC<TimerProps> = ({ 
   onSessionComplete, 
-  preferences
+  preferences,
+  onNewAchievements
 }) => {
   const {
     timeLeft,
     isRunning,
     isPaused,
     progress,
+    newlyUnlockedAchievements,
     startTimer,
     pauseTimer,
     resetTimer,
     handlePreset,
+    clearNewAchievements,
   } = useTimer({ 
     onSessionComplete, 
-    defaultDuration: preferences.defaultDuration, 
+    defaultSessionDurationSeconds: preferences.defaultDuration, 
     soundFile: preferences.sound 
   });
 
   const presets: TimerPreset[] = [5, 10, 15, 20, 30];
   const [showBreathing, setShowBreathing] = useState(preferences.breathingEnabled);
 
-  // Update breathing guide when preferences change
   useEffect(() => {
     setShowBreathing(preferences.breathingEnabled);
   }, [preferences.breathingEnabled]);
+
+  useEffect(() => {
+    if (onNewAchievements && newlyUnlockedAchievements.length > 0) {
+      onNewAchievements(newlyUnlockedAchievements);
+      clearNewAchievements();
+    }
+  }, [newlyUnlockedAchievements, onNewAchievements, clearNewAchievements]);
 
   return (
     <Card>

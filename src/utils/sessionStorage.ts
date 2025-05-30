@@ -1,49 +1,101 @@
 import type { Session } from '../types/session';
+import { formatDate } from './formatDate';
 
 const STORAGE_KEY = 'meditation_sessions';
 
+/**
+ * Saves a meditation session to localStorage
+ * @param session - The session to save
+ * @throws {Error} If localStorage is not available or session is invalid
+ */
 export const saveSession = (session: Session): void => {
-  const sessions = getSessions();
-  sessions.unshift(session); // Add new session at the beginning
-  // Remove the limit to keep all sessions for analytics
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+  if (!session.duration || !session.timestamp) {
+    throw new Error('Invalid session data');
+  }
+
+  try {
+    const sessions = getSessions();
+    sessions.unshift(session);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+  } catch (error) {
+    console.error('Failed to save session:', error);
+    throw new Error('Failed to save session to localStorage');
+  }
 };
 
+/**
+ * Retrieves all meditation sessions from localStorage
+ * @returns Array of meditation sessions
+ */
 export const getSessions = (): Session[] => {
-  const sessions = localStorage.getItem(STORAGE_KEY);
-  return sessions ? JSON.parse(sessions) : [];
+  try {
+    const sessions = localStorage.getItem(STORAGE_KEY);
+    return sessions ? JSON.parse(sessions) : [];
+  } catch (error) {
+    console.error('Failed to retrieve sessions:', error);
+    return [];
+  }
 };
 
+/**
+ * Retrieves the most recent meditation sessions
+ * @param limit - Maximum number of sessions to return
+ * @returns Array of recent meditation sessions
+ */
 export const getRecentSessions = (limit: number = 10): Session[] => {
   const sessions = getSessions();
   return sessions.slice(0, limit);
 };
 
+/**
+ * Clears all meditation sessions from localStorage
+ */
 export const clearSessions = (): void => {
-  localStorage.removeItem(STORAGE_KEY);
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.error('Failed to clear sessions:', error);
+  }
 };
 
+/**
+ * Formats a duration in seconds to a human-readable string
+ * @param seconds - Duration in seconds
+ * @returns Formatted duration string
+ */
 export const formatDuration = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60)
-  return `${minutes} min`
-}
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes} min`;
+};
 
-export const formatDate = (timestamp: string): string => {
-  return new Date(timestamp).toLocaleDateString('en-US', {
+/**
+ * Formats a session timestamp to a human-readable string
+ * @param timestamp - ISO timestamp string
+ * @returns Formatted date string
+ */
+export const formatSessionDate = (timestamp: string): string => {
+  return formatDate(timestamp, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
-  })
-}
+  });
+};
 
-// Analytics helper functions
+/**
+ * Calculates total meditation time across all sessions
+ * @returns Total duration in seconds
+ */
 export const getTotalMeditationTime = (): number => {
   const sessions = getSessions();
   return sessions.reduce((total, session) => total + session.duration, 0);
 };
 
+/**
+ * Calculates meditation time for the past week
+ * @returns Total duration in seconds
+ */
 export const getWeeklyMeditationTime = (): number => {
   const sessions = getSessions();
   const oneWeekAgo = new Date();
@@ -54,6 +106,10 @@ export const getWeeklyMeditationTime = (): number => {
     .reduce((total, session) => total + session.duration, 0);
 };
 
+/**
+ * Calculates meditation time for the past month
+ * @returns Total duration in seconds
+ */
 export const getMonthlyMeditationTime = (): number => {
   const sessions = getSessions();
   const oneMonthAgo = new Date();
@@ -64,6 +120,10 @@ export const getMonthlyMeditationTime = (): number => {
     .reduce((total, session) => total + session.duration, 0);
 };
 
+/**
+ * Calculates average session length
+ * @returns Average duration in seconds
+ */
 export const getAverageSessionLength = (): number => {
   const sessions = getSessions();
   if (sessions.length === 0) return 0;
@@ -72,6 +132,10 @@ export const getAverageSessionLength = (): number => {
   return Math.round(total / sessions.length);
 };
 
+/**
+ * Finds the longest meditation session
+ * @returns Duration of longest session in seconds
+ */
 export const getLongestSession = (): number => {
   const sessions = getSessions();
   if (sessions.length === 0) return 0;
@@ -79,6 +143,11 @@ export const getLongestSession = (): number => {
   return Math.max(...sessions.map(session => session.duration));
 };
 
+/**
+ * Gets daily meditation data for the specified number of days
+ * @param days - Number of days to include
+ * @returns Array of daily meditation data
+ */
 export const getDailySessionData = (days: number = 7): Array<{date: string, duration: number}> => {
   const sessions = getSessions();
   const result: Array<{date: string, duration: number}> = [];
@@ -93,7 +162,7 @@ export const getDailySessionData = (days: number = 7): Array<{date: string, dura
       .reduce((total, session) => total + session.duration, 0);
     
     result.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: formatDate(date.toISOString(), { month: 'short', day: 'numeric' }),
       duration: Math.round(dayTotal / 60) // Convert to minutes
     });
   }
@@ -101,6 +170,11 @@ export const getDailySessionData = (days: number = 7): Array<{date: string, dura
   return result;
 };
 
+/**
+ * Gets weekly meditation data for the specified number of weeks
+ * @param weeks - Number of weeks to include
+ * @returns Array of weekly meditation data
+ */
 export const getWeeklySessionData = (weeks: number = 4): Array<{week: string, duration: number}> => {
   const sessions = getSessions();
   const result: Array<{week: string, duration: number}> = [];
@@ -119,7 +193,7 @@ export const getWeeklySessionData = (weeks: number = 4): Array<{week: string, du
       .reduce((total, session) => total + session.duration, 0);
     
     result.push({
-      week: `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+      week: formatDate(startDate.toISOString(), { month: 'short', day: 'numeric' }),
       duration: Math.round(weekTotal / 60) // Convert to minutes
     });
   }

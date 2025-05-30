@@ -97,7 +97,10 @@ const BreathingPrompt = ({ isActive }: BreathingPromptProps) => {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-6 mt-8 p-6 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200/30 dark:border-indigo-700/30">
+    <div 
+      id="breathing-prompt"
+      className="flex flex-col items-center space-y-6 mt-8 p-6 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200/30 dark:border-indigo-700/30"
+    >
       <div className={`flex items-center space-x-3 transition-all duration-700 ${state.isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
         <div className={`w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 rounded-full flex items-center justify-center ${getAnimationClass(state.prompt)}`}>
           <span className="text-2xl">{getPromptEmoji(state.prompt)}</span>

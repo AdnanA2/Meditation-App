@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import Timer from './components/Timer';
@@ -10,16 +9,17 @@ import { AchievementTracker } from './components/dashboard/AchievementTracker';
 import { Navigation } from './components/Navigation';
 import type { NavigationTab } from './components/Navigation';
 import { useSettings } from './hooks/useSettings';
+import type { Achievement } from './types/achievement';
 
 function App() {
   const { preferences, updatePreferences } = useSettings();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<NavigationTab>('timer');
+  const [achievementsToDisplay, setAchievementsToDisplay] = useState<Achievement[]>([]);
 
   const handleSessionComplete = () => {
-    // This will be called when a meditation session is completed
-    // The Timer component will handle updating the session history internally
-    console.log('Meditation session completed');
+    console.log('Meditation session completed in App.tsx');
+    // Potentially refresh data related to sessions if needed here
   };
 
   const handleSettingsOpen = () => {
@@ -34,6 +34,13 @@ function App() {
     updatePreferences(newPreferences);
   };
 
+  const handleNewAchievements = (achievements: Achievement[]) => {
+    console.log('🏆 New Achievements Unlocked in App.tsx:', achievements);
+    setAchievementsToDisplay(achievements); 
+    // Here you would typically trigger a notification UI element
+    // For now, we just log and set state. A toast notification system would be ideal.
+  };
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'timer':
@@ -43,6 +50,7 @@ function App() {
             <Timer 
               onSessionComplete={handleSessionComplete} 
               preferences={preferences}
+              onNewAchievements={handleNewAchievements}
             />
             <SessionHistory />
           </div>

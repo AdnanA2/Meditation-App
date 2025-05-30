@@ -2,12 +2,13 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { saveSession } from '../utils/sessionStorage';
 import { updateStreak } from '../utils/streakStorage';
 import { checkAndUnlockAchievements } from '../utils/achievementStorage';
+import type { Achievement } from '../types/achievement';
 
 export type TimerPreset = 5 | 10 | 15 | 20 | 30;
 
 interface UseTimerProps {
   onSessionComplete: () => void;
-  defaultDuration?: number;
+  defaultSessionDurationSeconds?: number;
   soundFile?: string;
 }
 
@@ -16,25 +17,28 @@ interface UseTimerReturn {
   isRunning: boolean;
   isPaused: boolean;
   progress: number;
+  newlyUnlockedAchievements: Achievement[];
   startTimer: () => void;
   pauseTimer: () => void;
   resetTimer: () => void;
   setDuration: (duration: TimerPreset) => void;
   handlePreset: (minutes: TimerPreset) => void;
+  clearNewAchievements: () => void;
 }
 
 export const useTimer = ({ 
   onSessionComplete, 
-  defaultDuration = 300,
+  defaultSessionDurationSeconds = 300,
   soundFile = 'bell.mp3'
 }: UseTimerProps): UseTimerReturn => {
-  const [timeLeft, setTimeLeft] = useState<number>(defaultDuration);
+  const [timeLeft, setTimeLeft] = useState<number>(defaultSessionDurationSeconds);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [duration, setDuration] = useState<number>(defaultDuration);
+  const [activeTimerTotalSeconds, setActiveTimerTotalSeconds] = useState<number>(defaultSessionDurationSeconds);
   const [progress, setProgress] = useState<number>(100);
-  const [initialDuration, setInitialDuration] = useState(defaultDuration);
+  const [selectedSessionDurationSeconds, setSelectedSessionDurationSeconds] = useState(defaultSessionDurationSeconds);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
     audioRef.current = new Audio(`/${soundFile}`);
@@ -47,28 +51,26 @@ export const useTimer = ({
       intervalId = window.setInterval(() => {
         setTimeLeft((prev) => {
           const newTime = prev - 1;
-          setProgress((newTime / duration) * 100);
+          setProgress((newTime / activeTimerTotalSeconds) * 100);
           return newTime;
         });
       }, 1000);
     } else if (timeLeft === 0 && isRunning) {
       audioRef.current?.play();
-      setDuration(initialDuration);
-      // Save completed session and update streak
       saveSession({
-        duration: initialDuration,
+        duration: selectedSessionDurationSeconds,
         timestamp: new Date().toISOString()
       });
       updateStreak();
       
-      // Check for newly unlocked achievements
       const newAchievements = checkAndUnlockAchievements();
       if (newAchievements.length > 0) {
-        // You could emit an event or call a callback here to show notifications
-        console.log('🎉 New achievements unlocked:', newAchievements.map(a => a.title));
+        setNewlyUnlockedAchievements(newAchievements);
+        console.log('🎉 Internal: New achievements unlocked:', newAchievements.map(a => a.title));
       }
       
       onSessionComplete();
+      setIsRunning(false);
     }
 
     return () => {
@@ -76,12 +78,17 @@ export const useTimer = ({
         clearInterval(intervalId);
       }
     };
-  }, [isRunning, timeLeft, duration, initialDuration, onSessionComplete]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning, timeLeft, activeTimerTotalSeconds, selectedSessionDurationSeconds, onSessionComplete]);
 
   const startTimer = useCallback(() => {
+    if (timeLeft === 0) {
+      setTimeLeft(activeTimerTotalSeconds);
+      setProgress(100);
+    }
     setIsRunning(true);
     setIsPaused(false);
-  }, []);
+  }, [activeTimerTotalSeconds, timeLeft]);
 
   const pauseTimer = useCallback(() => {
     setIsRunning(false);
@@ -91,13 +98,14 @@ export const useTimer = ({
   const resetTimer = useCallback(() => {
     setIsRunning(false);
     setIsPaused(false);
-    setTimeLeft(duration);
+    setTimeLeft(activeTimerTotalSeconds);
     setProgress(100);
-  }, [duration]);
+  }, [activeTimerTotalSeconds]);
 
   const handleSetDuration = useCallback((newDuration: TimerPreset) => {
     const newDurationInSeconds = newDuration * 60;
-    setDuration(newDurationInSeconds);
+    setActiveTimerTotalSeconds(newDurationInSeconds);
+    setSelectedSessionDurationSeconds(newDurationInSeconds);
     setTimeLeft(newDurationInSeconds);
     setProgress(100);
     setIsRunning(false);
@@ -106,12 +114,16 @@ export const useTimer = ({
 
   const handlePreset = useCallback((minutes: TimerPreset) => {
     const seconds = minutes * 60;
-    setDuration(seconds);
-    setInitialDuration(seconds);
+    setActiveTimerTotalSeconds(seconds);
+    setSelectedSessionDurationSeconds(seconds);
     setTimeLeft(seconds);
     setProgress(100);
     setIsRunning(false);
     setIsPaused(false);
+  }, []);
+
+  const clearNewAchievements = useCallback(() => {
+    setNewlyUnlockedAchievements([]);
   }, []);
 
   return {
@@ -119,10 +131,12 @@ export const useTimer = ({
     isRunning,
     isPaused,
     progress,
+    newlyUnlockedAchievements,
     startTimer,
     pauseTimer,
     resetTimer,
     setDuration: handleSetDuration,
     handlePreset,
+    clearNewAchievements,
   };
 }; 
