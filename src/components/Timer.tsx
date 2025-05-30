@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTimer, TimerPreset } from '../hooks/useTimer';
 import { formatTime } from '../utils/formatTime';
 import BreathingPrompt from './BreathingPrompt';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+import { UserPreferences } from '../hooks/useSettings';
 
 interface TimerProps {
   onSessionComplete: () => void;
-  defaultDuration?: TimerPreset;
-  showBreathingByDefault?: boolean;
-  soundFile?: string;
+  preferences: UserPreferences;
 }
 
 export const Timer: React.FC<TimerProps> = ({ 
   onSessionComplete, 
-  defaultDuration = 5, 
-  showBreathingByDefault = false, 
-  soundFile = 'bell.mp3' 
+  preferences
 }) => {
   const {
     timeLeft,
@@ -27,10 +24,19 @@ export const Timer: React.FC<TimerProps> = ({
     pauseTimer,
     resetTimer,
     handlePreset,
-  } = useTimer({ onSessionComplete, defaultDuration, soundFile });
+  } = useTimer({ 
+    onSessionComplete, 
+    defaultDuration: Math.round(preferences.defaultDuration / 60) as TimerPreset, 
+    soundFile: preferences.sound 
+  });
 
-  const presets: TimerPreset[] = [5, 10, 15];
-  const [showBreathing, setShowBreathing] = useState(showBreathingByDefault);
+  const presets: TimerPreset[] = [5, 10, 15, 20];
+  const [showBreathing, setShowBreathing] = useState(preferences.breathingEnabled);
+
+  // Update breathing guide when preferences change
+  useEffect(() => {
+    setShowBreathing(preferences.breathingEnabled);
+  }, [preferences.breathingEnabled]);
 
   return (
     <Card>
@@ -114,7 +120,7 @@ export const Timer: React.FC<TimerProps> = ({
         </Button>
       </div>
 
-      <BreathingPrompt isActive={showBreathing && !isPaused} />
+      <BreathingPrompt isActive={showBreathing && isRunning && !isPaused} />
 
       <div className="mt-6 flex justify-center">
         <Button
