@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Card } from './ui/Card';
-import { Button } from './ui/Button';
+import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
 import {
   getTotalMeditationTime,
   getWeeklyMeditationTime,
@@ -11,8 +11,8 @@ import {
   getDailySessionData,
   getWeeklySessionData,
   getSessions
-} from '../utils/sessionStorage';
-import { getStreakData } from '../utils/streakStorage';
+} from '../../utils/sessionStorage';
+import { getStreakData } from '../../utils/streakStorage';
 
 type ChartType = 'daily' | 'weekly';
 
