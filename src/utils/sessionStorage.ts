@@ -1,4 +1,4 @@
-import { Session } from '../types/session';
+import type { Session } from '../types/session';
 
 const STORAGE_KEY = 'meditation_sessions';
 

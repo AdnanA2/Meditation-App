@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Header } from './components/Header';
 import Timer from './components/Timer';
 import { SessionHistory } from './components/SessionHistory';
@@ -6,7 +6,8 @@ import { StreakTracker } from './components/StreakTracker';
 import SettingsModal from './components/SettingsModal';
 import { StatsDashboard } from './components/dashboard/StatsDashboard';
 import { AchievementTracker } from './components/dashboard/AchievementTracker';
-import { Navigation, NavigationTab } from './components/Navigation';
+import { Navigation } from './components/Navigation';
+import type { NavigationTab } from './components/Navigation';
 import { useSettings } from './hooks/useSettings';
 
 function App() {

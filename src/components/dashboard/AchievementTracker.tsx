@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Card } from './ui/Card';
-import { Achievement } from '../types/achievement';
+import { Card } from '../ui/Card';
+import type { Achievement } from '../../types/achievement';
 import {
   getAllAchievementsWithProgress,
   getAchievementStats,
   checkAndUnlockAchievements
-} from '../utils/achievementStorage';
+} from '../../utils/achievementStorage';
 
 interface AchievementCardProps {
   achievement: Achievement;

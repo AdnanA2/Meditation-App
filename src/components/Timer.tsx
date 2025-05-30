@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useTimer, TimerPreset } from '../hooks/useTimer';
+import { useTimer } from '../hooks/useTimer';
+import type { TimerPreset } from '../hooks/useTimer';
 import { formatTime } from '../utils/formatTime';
 import BreathingPrompt from './BreathingPrompt';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
-import { UserPreferences } from '../hooks/useSettings';
+import type { UserPreferences } from '../hooks/useSettings';
 
 interface TimerProps {
   onSessionComplete: () => void;

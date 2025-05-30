@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Session } from '../types/session'
+import type { Session } from '../types/session'
 import { getRecentSessions, clearSessions } from '../utils/sessionStorage'
 import { formatDate } from '../utils/formatDate'
 import { Card } from './ui/Card'

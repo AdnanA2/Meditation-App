@@ -1,5 +1,5 @@
-import { Achievement, AchievementProgress } from '../types/achievement';
-import { getSessions, getTotalMeditationTime } from './sessionStorage';
+import type { Achievement, AchievementProgress } from '../types/achievement';
+import { getSessions } from './sessionStorage';
 import { getStreakData } from './streakStorage';
 
 const ACHIEVEMENT_KEY = 'meditation_achievements';

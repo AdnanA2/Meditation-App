@@ -1,5 +1,3 @@
-import { Button } from './ui/Button';
-
 export type NavigationTab = 'timer' | 'analytics' | 'achievements';
 
 interface NavigationProps {
