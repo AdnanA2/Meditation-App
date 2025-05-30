@@ -42,9 +42,9 @@ export const Timer: React.FC<TimerProps> = ({
   return (
     <Card>
       {/* Timer Display */}
-      <div className="relative mb-8">
+      <div className="relative mb-10">
         <div 
-          className="text-7xl font-bold text-center text-gray-800 dark:text-white mb-4 transition-all duration-300"
+          className="text-6xl sm:text-7xl font-light text-center text-gray-800 dark:text-white mb-6 transition-all duration-300 tracking-tight"
           role="timer"
           aria-label={`Time remaining: ${formatTime(timeLeft)}`}
         >
@@ -52,7 +52,7 @@ export const Timer: React.FC<TimerProps> = ({
         </div>
         {isPaused && (
           <div 
-            className="absolute top-0 right-0 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full"
+            className="absolute -top-2 right-0 text-xs text-gray-500 dark:text-gray-400 bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200/50 dark:border-gray-600/50"
             role="status"
             aria-label="Timer is paused"
           >
@@ -63,27 +63,27 @@ export const Timer: React.FC<TimerProps> = ({
 
       {/* Progress Bar */}
       <div 
-        className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full mb-8 overflow-hidden"
+        className="w-full h-2 bg-gray-200/60 dark:bg-gray-700/60 rounded-full mb-10 overflow-hidden backdrop-blur-sm"
         role="progressbar"
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
       >
         <div
-          className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-1000 ease-linear"
+          className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-1000 ease-linear shadow-sm"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* Preset Buttons */}
-      <div className="flex justify-center gap-4 mb-8 flex-wrap">
+      <div className="flex justify-center gap-3 mb-10 flex-wrap">
         {presets.map((preset) => (
           <Button
             key={preset}
             onClick={() => handlePreset(preset)}
             variant={timeLeft === preset * 60 ? 'primary' : 'secondary'}
             aria-pressed={timeLeft === preset * 60}
-            className="transition-all duration-200 hover:scale-105"
+            className="text-sm min-w-[3rem]"
           >
             {preset}m
           </Button>
@@ -91,12 +91,12 @@ export const Timer: React.FC<TimerProps> = ({
       </div>
 
       {/* Control Buttons */}
-      <div className="flex justify-center gap-4">
+      <div className="flex justify-center gap-4 mb-8">
         {!isRunning ? (
           <Button 
             onClick={startTimer} 
             variant="primary"
-            className="transition-all duration-200 hover:scale-105"
+            className="px-8"
             aria-label="Start timer"
           >
             Start
@@ -105,7 +105,7 @@ export const Timer: React.FC<TimerProps> = ({
           <Button 
             onClick={pauseTimer} 
             variant="secondary"
-            className="transition-all duration-200 hover:scale-105"
+            className="px-8"
             aria-label="Pause timer"
           >
             Pause
@@ -114,7 +114,6 @@ export const Timer: React.FC<TimerProps> = ({
         <Button 
           onClick={resetTimer} 
           variant="secondary"
-          className="transition-all duration-200 hover:scale-105"
           aria-label="Reset timer"
         >
           Reset
@@ -123,11 +122,11 @@ export const Timer: React.FC<TimerProps> = ({
 
       <BreathingPrompt isActive={showBreathing && isRunning && !isPaused} />
 
-      <div className="mt-6 flex justify-center">
+      <div className="mt-8 flex justify-center">
         <Button
           onClick={() => setShowBreathing(!showBreathing)}
           variant={showBreathing ? 'primary' : 'secondary'}
-          className="transition-all duration-200 hover:scale-105"
+          className="text-sm"
           aria-expanded={showBreathing}
           aria-controls="breathing-prompt"
         >

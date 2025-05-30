@@ -22,14 +22,16 @@ export const DarkModeToggle = () => {
   return (
     <button
       onClick={handleToggle}
-      className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+      className="p-2.5 rounded-full hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
-      {theme === 'light' ? (
-        <span className="text-xl" role="img" aria-hidden="true">🌙</span>
-      ) : (
-        <span className="text-xl" role="img" aria-hidden="true">🌞</span>
-      )}
+      <div className="relative w-5 h-5 flex items-center justify-center">
+        {theme === 'light' ? (
+          <span className="text-xl transition-transform duration-300 hover:rotate-12" role="img" aria-hidden="true">🌙</span>
+        ) : (
+          <span className="text-xl transition-transform duration-300 hover:rotate-12" role="img" aria-hidden="true">🌞</span>
+        )}
+      </div>
     </button>
   );
 }; 
