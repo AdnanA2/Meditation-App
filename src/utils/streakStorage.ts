@@ -1,5 +1,4 @@
 const STREAK_KEY = 'meditation_streak';
-const LAST_SESSION_KEY = 'last_meditation_session';
 
 interface StreakData {
   currentStreak: number;
