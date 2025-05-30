@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { saveSession } from '../utils/sessionStorage';
 import { updateStreak } from '../utils/streakStorage';
 
-export type TimerPreset = 5 | 10 | 15;
+export type TimerPreset = 5 | 10 | 15 | 20 | 30;
 
 interface UseTimerProps {
   onSessionComplete: () => void;
-  defaultDuration?: TimerPreset;
+  defaultDuration?: number;
   soundFile?: string;
 }
 
@@ -24,15 +24,15 @@ interface UseTimerReturn {
 
 export const useTimer = ({ 
   onSessionComplete, 
-  defaultDuration = 5,
+  defaultDuration = 300,
   soundFile = 'bell.mp3'
 }: UseTimerProps): UseTimerReturn => {
-  const [timeLeft, setTimeLeft] = useState<number>(defaultDuration * 60);
+  const [timeLeft, setTimeLeft] = useState<number>(defaultDuration);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [duration, setDuration] = useState<number>(defaultDuration * 60);
+  const [duration, setDuration] = useState<number>(defaultDuration);
   const [progress, setProgress] = useState<number>(100);
-  const [initialDuration, setInitialDuration] = useState(defaultDuration * 60);
+  const [initialDuration, setInitialDuration] = useState(defaultDuration);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {

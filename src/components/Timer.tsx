@@ -26,11 +26,11 @@ export const Timer: React.FC<TimerProps> = ({
     handlePreset,
   } = useTimer({ 
     onSessionComplete, 
-    defaultDuration: Math.round(preferences.defaultDuration / 60) as TimerPreset, 
+    defaultDuration: preferences.defaultDuration, 
     soundFile: preferences.sound 
   });
 
-  const presets: TimerPreset[] = [5, 10, 15, 20];
+  const presets: TimerPreset[] = [5, 10, 15, 20, 30];
   const [showBreathing, setShowBreathing] = useState(preferences.breathingEnabled);
 
   // Update breathing guide when preferences change
@@ -75,7 +75,7 @@ export const Timer: React.FC<TimerProps> = ({
       </div>
 
       {/* Preset Buttons */}
-      <div className="flex justify-center gap-4 mb-8">
+      <div className="flex justify-center gap-4 mb-8 flex-wrap">
         {presets.map((preset) => (
           <Button
             key={preset}
