@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { saveSession } from '../utils/sessionStorage';
 import { updateStreak } from '../utils/streakStorage';
+import { checkAndUnlockAchievements } from '../utils/achievementStorage';
 
 export type TimerPreset = 5 | 10 | 15 | 20 | 30;
 
@@ -59,6 +60,14 @@ export const useTimer = ({
         timestamp: new Date().toISOString()
       });
       updateStreak();
+      
+      // Check for newly unlocked achievements
+      const newAchievements = checkAndUnlockAchievements();
+      if (newAchievements.length > 0) {
+        // You could emit an event or call a callback here to show notifications
+        console.log('🎉 New achievements unlocked:', newAchievements.map(a => a.title));
+      }
+      
       onSessionComplete();
     }
 

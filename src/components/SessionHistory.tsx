@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Session } from '../types/session'
-import { getSessions, clearSessions } from '../utils/sessionStorage'
+import { getRecentSessions, clearSessions } from '../utils/sessionStorage'
 import { formatDate } from '../utils/formatDate'
 import { Card } from './ui/Card'
 import { Button } from './ui/Button'
@@ -13,7 +13,7 @@ export const SessionHistory = () => {
     setIsLoading(true)
     // Simulate loading delay for better UX
     setTimeout(() => {
-      setSessions(getSessions())
+      setSessions(getRecentSessions())
       setIsLoading(false)
     }, 500)
   }
