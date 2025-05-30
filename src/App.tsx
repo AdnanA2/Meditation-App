@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { useState } from 'react';
 import { Header } from './components/Header';
 import Timer from './components/Timer';
 import { SessionHistory } from './components/SessionHistory';
