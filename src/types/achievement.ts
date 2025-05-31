@@ -1,9 +1,17 @@
+import type { Session } from './session';
+
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastSessionDate: string | null;
+}
+
 export interface Achievement {
   id: string;
   title: string;
   description: string;
   icon: string;
-  condition: (sessions: any[], streakData: any) => boolean;
+  condition: (sessions: Session[], streakData: StreakData) => boolean;
   unlocked: boolean;
   unlockedAt?: string;
 }

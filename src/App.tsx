@@ -67,10 +67,10 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 text-gray-800 dark:text-gray-200 transition-all duration-500">
       <Header onSettingsClick={handleSettingsOpen} />
-      <main className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-8">
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-          <div className="animate-fade-in">
+          <div className="animate-fade-in transform transition-all duration-300">
             {renderActiveTab()}
           </div>
         </div>
