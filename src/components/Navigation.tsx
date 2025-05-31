@@ -91,13 +91,13 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
 
   return (
     <nav 
-      className="w-full max-w-lg mx-auto mb-8"
+      className="w-full max-w-lg mx-auto mb-12"
       role="navigation"
       aria-label="Main navigation"
     >
       <div 
         ref={tabsRef}
-        className="flex bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-full p-1.5 shadow-lg border border-gray-200/30 dark:border-gray-700/30 transition-all duration-300 hover:shadow-xl"
+        className="flex bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-full p-2 shadow-lg border border-gray-200/30 dark:border-gray-700/30 transition-all duration-300 hover:shadow-xl"
         role="tablist"
       >
         {tabs.map((tab, index) => (
@@ -130,7 +130,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
             >
               {tab.icon}
             </span>
-            <span className="hidden sm:inline relative z-10">{tab.label}</span>
+            <span className="hidden sm:inline relative z-10 font-medium">{tab.label}</span>
             
             {/* Active indicator */}
             {activeTab === tab.id && (

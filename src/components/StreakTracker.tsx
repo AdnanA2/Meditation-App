@@ -66,13 +66,13 @@ export const StreakTracker = () => {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-gradient-to-br from-white/90 to-indigo-50/90 dark:from-gray-800/90 dark:to-indigo-900/30 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/30 dark:border-gray-700/30 transition-all duration-300 hover:shadow-2xl">
+    <div className="w-full max-w-md mx-auto p-8 bg-gradient-to-br from-white/90 to-indigo-50/90 dark:from-gray-800/90 dark:to-indigo-900/30 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/30 dark:border-gray-700/30 transition-all duration-300 hover:shadow-2xl">
       <div className="text-center">
-        <div className="flex items-center justify-center space-x-4 mb-4">
+        <div className="flex items-center justify-center space-x-6 mb-6">
           <IconWrapper
             variant={getIconVariant(streakData.currentStreak)}
             size="xl"
-            className="animate-pulse"
+            className="animate-pulse transform hover:scale-110 transition-transform duration-300"
             aria-label={`Streak icon: ${getStreakEmoji(streakData.currentStreak)}`}
           >
             {getStreakEmoji(streakData.currentStreak)}
@@ -80,7 +80,7 @@ export const StreakTracker = () => {
           
           <div>
             <h2 
-              className="text-3xl font-light text-gray-800 dark:text-white tracking-tight"
+              className="text-4xl font-light text-gray-800 dark:text-white tracking-tight mb-2"
               aria-label={`Current streak: ${streakData.currentStreak} days`}
             >
               {streakData.currentStreak}
@@ -88,17 +88,17 @@ export const StreakTracker = () => {
             <Badge 
               variant={getBadgeVariant(streakData.currentStreak)}
               size="md"
-              className="uppercase tracking-wider font-medium"
+              className="uppercase tracking-wider font-medium px-4 py-1.5"
             >
               Day{streakData.currentStreak !== 1 ? 's' : ''} Streak
             </Badge>
           </div>
         </div>
         
-        <p className="text-gray-600 dark:text-gray-400 mb-4 font-light">
+        <p className="text-gray-600 dark:text-gray-400 mb-6 font-light text-lg">
           {streakData.lastSessionDate ? (
             <>
-              Last session: <time dateTime={streakData.lastSessionDate}>{formatDate(streakData.lastSessionDate)}</time>
+              Last session: <time dateTime={streakData.lastSessionDate} className="font-medium">{formatDate(streakData.lastSessionDate)}</time>
             </>
           ) : (
             'Start your meditation journey today!'
@@ -107,11 +107,11 @@ export const StreakTracker = () => {
 
         {streakData.currentStreak > 0 && (
           <div 
-            className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl border border-indigo-200/30 dark:border-indigo-700/30"
+            className="mt-6 p-5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl border border-indigo-200/30 dark:border-indigo-700/30 shadow-md hover:shadow-lg transition-all duration-300"
             role="status"
             aria-live="polite"
           >
-            <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">
+            <p className="text-base text-indigo-700 dark:text-indigo-300 font-medium">
               {getStreakMessage(streakData.currentStreak)}
             </p>
           </div>

@@ -47,8 +47,8 @@ export const Header = ({ onSettingsClick }: HeaderProps) => {
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         {/* App Title */}
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
-            <span className="text-white text-lg font-bold">🧘</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-all duration-300">
+            <span className="text-white text-xl font-bold">🧘</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-serif font-light text-gray-800 dark:text-white tracking-wide transition-all duration-300 hover:text-indigo-600 dark:hover:text-indigo-400">
             <span className="hidden sm:inline">Meditation App</span>
@@ -57,11 +57,11 @@ export const Header = ({ onSettingsClick }: HeaderProps) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex items-center space-x-3">
           <button
             onClick={onSettingsClick}
             className="
-              p-2 sm:p-2.5 rounded-full text-gray-600 dark:text-gray-300 
+              p-2.5 rounded-full text-gray-600 dark:text-gray-300 
               hover:bg-gray-100/80 dark:hover:bg-gray-700/80 
               transition-all duration-200 
               focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-white/50 dark:focus:ring-offset-gray-900/50
@@ -72,7 +72,7 @@ export const Header = ({ onSettingsClick }: HeaderProps) => {
             title="Settings"
           >
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:rotate-90"
+              className="w-5 h-5 transition-transform duration-200 group-hover:rotate-90"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

@@ -79,10 +79,10 @@ export const SessionHistory = () => {
 
   if (isLoading) {
     return (
-      <Card aria-label="Loading meditation sessions">
+      <Card className="max-w-none p-8" aria-label="Loading meditation sessions">
         <div className="flex items-center justify-center py-12 animate-fade-in">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-200 border-t-indigo-600" aria-hidden="true"></div>
-          <span className="ml-3 text-gray-600 dark:text-gray-400 font-light">Loading sessions...</span>
+          <div className="animate-spin rounded-full h-10 w-10 border-3 border-indigo-200 border-t-indigo-600" aria-hidden="true"></div>
+          <span className="ml-4 text-gray-600 dark:text-gray-400 font-light text-lg">Loading sessions...</span>
         </div>
       </Card>
     )
@@ -90,20 +90,20 @@ export const SessionHistory = () => {
 
   if (sessions.length === 0) {
     return (
-      <Card aria-label="No meditation sessions found">
-        <div className="text-center text-gray-600 dark:text-gray-400 py-8">
-          <IconWrapper variant="info" size="xl" className="mx-auto mb-4">
+      <Card className="max-w-none p-8" aria-label="No meditation sessions found">
+        <div className="text-center text-gray-600 dark:text-gray-400 py-12">
+          <IconWrapper variant="info" size="xl" className="mx-auto mb-6 transform hover:scale-110 transition-transform duration-300">
             🧘‍♀️
           </IconWrapper>
-          <h3 className="text-xl mb-2 font-light text-gray-800 dark:text-white">No meditation sessions yet</h3>
-          <p className="text-sm opacity-75">Complete a meditation session to see your history here</p>
+          <h3 className="text-2xl mb-3 font-light text-gray-800 dark:text-white">No meditation sessions yet</h3>
+          <p className="text-base opacity-75">Complete a meditation session to see your history here</p>
         </div>
       </Card>
     )
   }
 
   return (
-    <Card className="max-w-none" aria-label="Meditation session history">
+    <Card className="max-w-none p-8" aria-label="Meditation session history">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-light text-gray-800 dark:text-white tracking-tight">
           Recent Sessions
@@ -114,30 +114,32 @@ export const SessionHistory = () => {
           size="sm"
           loading={isClearing}
           disabled={isClearing}
+          className="px-4 py-2"
           aria-label="Clear all meditation history"
         >
           Clear History
         </Button>
       </div>
 
-      <div className="space-y-3" role="list" aria-label="List of recent meditation sessions">
+      <div className="space-y-4" role="list" aria-label="List of recent meditation sessions">
         {sessions.map((session, index) => (
           <div
             key={session.timestamp}
-            className="flex items-center justify-between p-5 bg-gradient-to-r from-white/60 to-indigo-50/60 dark:from-gray-700/60 dark:to-indigo-900/20 backdrop-blur-sm rounded-xl border border-gray-200/30 dark:border-gray-600/30 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+            className="flex items-center justify-between p-6 bg-gradient-to-r from-white/60 to-indigo-50/60 dark:from-gray-700/60 dark:to-indigo-900/20 backdrop-blur-sm rounded-xl border border-gray-200/30 dark:border-gray-600/30 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
             role="listitem"
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-5">
               <IconWrapper
                 variant={getSessionIconVariant(session.duration)}
                 size="md"
+                className="transform hover:scale-110 transition-transform duration-300"
                 aria-label={`Session ${sessions.length - index} icon`}
               >
                 {getSessionIcon(index)}
               </IconWrapper>
               
               <div>
-                <p className="font-medium text-gray-800 dark:text-white">
+                <p className="text-lg font-medium text-gray-800 dark:text-white">
                   {formatDuration(session.duration)}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 font-light">
@@ -152,6 +154,7 @@ export const SessionHistory = () => {
               <Badge 
                 variant="default" 
                 size="sm"
+                className="px-3 py-1"
                 aria-label={`Session number ${sessions.length - index}`}
               >
                 #{sessions.length - index}

@@ -105,7 +105,7 @@ export const Timer: React.FC<TimerProps> = ({
 
   return (
     <Card 
-      className="max-w-lg"
+      className="max-w-lg mx-auto p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-xl border border-gray-200/30 dark:border-gray-700/30 hover:shadow-2xl transition-all duration-500"
       aria-label="Meditation timer"
       role="region"
     >

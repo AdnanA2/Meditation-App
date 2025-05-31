@@ -161,20 +161,20 @@ const BreathingPrompt = ({
   return (
     <div 
       id="breathing-prompt"
-      className="flex flex-col items-center space-y-6 mt-8 p-6 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200/30 dark:border-indigo-700/30"
+      className="flex flex-col items-center space-y-6 mt-8 p-8 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200/30 dark:border-indigo-700/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500"
       role="region"
       aria-label="Breathing guide"
       aria-live="polite"
     >
       <div 
-        className={`flex items-center space-x-3 transition-all duration-700 ${
+        className={`flex items-center space-x-4 transition-all duration-700 ${
           state.isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
         <IconWrapper
           variant={getIconVariant(state.prompt)}
           size="lg"
-          className={getAnimationClass(state.prompt)}
+          className={`${getAnimationClass(state.prompt)} transform hover:scale-110 transition-transform duration-300`}
           aria-label={`${state.prompt} icon`}
         >
           {getPromptEmoji(state.prompt)}
