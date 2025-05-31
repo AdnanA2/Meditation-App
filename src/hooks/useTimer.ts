@@ -6,26 +6,65 @@ import type { Achievement } from '../types/achievement';
 
 export type TimerPreset = 5 | 10 | 15 | 20 | 30;
 
+/**
+ * Configuration options for the useTimer hook
+ */
 interface UseTimerProps {
+  /** Callback function called when a meditation session completes */
   onSessionComplete: () => void;
+  /** Default session duration in seconds (default: 300) */
   defaultSessionDurationSeconds?: number;
+  /** Sound file to play when session completes (default: 'bell.mp3') */
   soundFile?: string;
 }
 
+/**
+ * Return type for the useTimer hook
+ */
 interface UseTimerReturn {
+  /** Current time remaining in seconds */
   timeLeft: number;
+  /** Whether the timer is currently running */
   isRunning: boolean;
+  /** Whether the timer is paused */
   isPaused: boolean;
+  /** Progress percentage (0-100) */
   progress: number;
+  /** Array of newly unlocked achievements */
   newlyUnlockedAchievements: Achievement[];
+  /** Start or resume the timer */
   startTimer: () => void;
+  /** Pause the timer */
   pauseTimer: () => void;
+  /** Reset the timer to initial state */
   resetTimer: () => void;
+  /** Set timer duration using preset values */
   setDuration: (duration: TimerPreset) => void;
+  /** Handle preset button clicks */
   handlePreset: (minutes: TimerPreset) => void;
+  /** Clear the newly unlocked achievements array */
   clearNewAchievements: () => void;
 }
 
+/**
+ * A comprehensive timer hook for meditation sessions with achievement tracking.
+ * Manages timer state, audio playback, session storage, and achievement unlocking.
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   timeLeft,
+ *   isRunning,
+ *   startTimer,
+ *   pauseTimer,
+ *   resetTimer
+ * } = useTimer({
+ *   onSessionComplete: () => console.log('Session complete!'),
+ *   defaultSessionDurationSeconds: 600,
+ *   soundFile: 'bell.mp3'
+ * });
+ * ```
+ */
 export const useTimer = ({ 
   onSessionComplete, 
   defaultSessionDurationSeconds = 300,
@@ -40,10 +79,18 @@ export const useTimer = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<Achievement[]>([]);
 
+  // Initialize audio element when sound file changes
   useEffect(() => {
-    audioRef.current = new Audio(`/${soundFile}`);
+    try {
+      audioRef.current = new Audio(`/${soundFile}`);
+      // Preload the audio for better performance
+      audioRef.current.preload = 'auto';
+    } catch (error) {
+      console.warn('Failed to load audio file:', soundFile, error);
+    }
   }, [soundFile]);
 
+  // Main timer countdown effect
   useEffect(() => {
     let intervalId: number | undefined;
 
@@ -56,21 +103,8 @@ export const useTimer = ({
         });
       }, 1000);
     } else if (timeLeft === 0 && isRunning) {
-      audioRef.current?.play();
-      saveSession({
-        duration: selectedSessionDurationSeconds,
-        timestamp: new Date().toISOString()
-      });
-      updateStreak();
-      
-      const newAchievements = checkAndUnlockAchievements();
-      if (newAchievements.length > 0) {
-        setNewlyUnlockedAchievements(newAchievements);
-        console.log('🎉 Internal: New achievements unlocked:', newAchievements.map(a => a.title));
-      }
-      
-      onSessionComplete();
-      setIsRunning(false);
+      // Session completed
+      handleSessionComplete();
     }
 
     return () => {
@@ -78,9 +112,51 @@ export const useTimer = ({
         clearInterval(intervalId);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, timeLeft, activeTimerTotalSeconds, selectedSessionDurationSeconds, onSessionComplete]);
 
+  /**
+   * Handles session completion logic including audio, storage, and achievements
+   */
+  const handleSessionComplete = useCallback(async () => {
+    try {
+      // Play completion sound
+      if (audioRef.current) {
+        await audioRef.current.play().catch(error => {
+          console.warn('Failed to play completion sound:', error);
+        });
+      }
+
+      // Save session data
+      saveSession({
+        duration: selectedSessionDurationSeconds,
+        timestamp: new Date().toISOString()
+      });
+
+      // Update streak
+      updateStreak();
+      
+      // Check for new achievements
+      const newAchievements = checkAndUnlockAchievements();
+      if (newAchievements.length > 0) {
+        setNewlyUnlockedAchievements(newAchievements);
+        console.log('🎉 New achievements unlocked:', newAchievements.map(a => a.title));
+      }
+      
+      // Call completion callback
+      onSessionComplete();
+      
+      // Stop timer
+      setIsRunning(false);
+    } catch (error) {
+      console.error('Error handling session completion:', error);
+      // Still stop the timer even if there's an error
+      setIsRunning(false);
+    }
+  }, [selectedSessionDurationSeconds, onSessionComplete]);
+
+  /**
+   * Start or resume the timer
+   */
   const startTimer = useCallback(() => {
     if (timeLeft === 0) {
       setTimeLeft(activeTimerTotalSeconds);
@@ -90,11 +166,17 @@ export const useTimer = ({
     setIsPaused(false);
   }, [activeTimerTotalSeconds, timeLeft]);
 
+  /**
+   * Pause the timer
+   */
   const pauseTimer = useCallback(() => {
     setIsRunning(false);
     setIsPaused(true);
   }, []);
 
+  /**
+   * Reset the timer to initial state
+   */
   const resetTimer = useCallback(() => {
     setIsRunning(false);
     setIsPaused(false);
@@ -102,6 +184,9 @@ export const useTimer = ({
     setProgress(100);
   }, [activeTimerTotalSeconds]);
 
+  /**
+   * Set timer duration using preset values
+   */
   const handleSetDuration = useCallback((newDuration: TimerPreset) => {
     const newDurationInSeconds = newDuration * 60;
     setActiveTimerTotalSeconds(newDurationInSeconds);
@@ -112,6 +197,9 @@ export const useTimer = ({
     setIsPaused(false);
   }, []);
 
+  /**
+   * Handle preset button clicks (alias for setDuration)
+   */
   const handlePreset = useCallback((minutes: TimerPreset) => {
     const seconds = minutes * 60;
     setActiveTimerTotalSeconds(seconds);
@@ -122,6 +210,9 @@ export const useTimer = ({
     setIsPaused(false);
   }, []);
 
+  /**
+   * Clear the newly unlocked achievements array
+   */
   const clearNewAchievements = useCallback(() => {
     setNewlyUnlockedAchievements([]);
   }, []);

@@ -1,32 +1,78 @@
+/**
+ * Header component with app title, settings button, and dark mode toggle
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <Header onSettingsClick={() => setSettingsOpen(true)} />
+ * ```
+ */
+
 import { DarkModeToggle } from './DarkModeToggle';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { applyTheme, getInitialTheme } from '../utils/theme';
 
 interface HeaderProps {
+  /** Callback function when settings button is clicked */
   onSettingsClick: () => void;
 }
 
 export const Header = ({ onSettingsClick }: HeaderProps) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
   useEffect(() => {
     // Apply initial theme on mount
     applyTheme(getInitialTheme());
+
+    // Handle scroll effect for header
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20 z-50 transition-all duration-300">
+    <header 
+      className={`
+        fixed top-0 left-0 right-0 h-16 z-50 transition-all duration-300
+        ${isScrolled 
+          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-200/30 dark:border-gray-700/30 shadow-lg' 
+          : 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/20 dark:border-gray-700/20'
+        }
+      `}
+      role="banner"
+    >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
-        <h1 className="text-2xl font-serif font-light text-gray-800 dark:text-white tracking-wide">
-          Meditation App
-        </h1>
+        {/* App Title */}
         <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+            <span className="text-white text-lg font-bold">🧘</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-serif font-light text-gray-800 dark:text-white tracking-wide transition-all duration-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <span className="hidden sm:inline">Meditation App</span>
+            <span className="sm:hidden">Meditate</span>
+          </h1>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <button
             onClick={onSettingsClick}
-            className="p-2.5 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 hover:scale-105"
+            className="
+              p-2 sm:p-2.5 rounded-full text-gray-600 dark:text-gray-300 
+              hover:bg-gray-100/80 dark:hover:bg-gray-700/80 
+              transition-all duration-200 
+              focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-white/50 dark:focus:ring-offset-gray-900/50
+              hover:scale-105 active:scale-95
+              group
+            "
             aria-label="Open settings"
             title="Settings"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:rotate-90"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
